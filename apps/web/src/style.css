@@ -1,0 +1,815 @@
+@import 'tailwindcss';
+
+/* ============================================================================
+   视觉规范(浅蓝治愈风,与日历模块同一套色板)
+   - 底色:极淡云朵奶蓝;文字:深海黛灰蓝;不用纯黑纯白硬对比
+   - 主体:海雾灰蓝(操作/表头) + 天空蓝(高亮/选中),冷调但降饱和
+   - 保留约 10% 暖色点缀(暖日黄/柔桃粉):纪念日、小徽章、爱心,
+     避免整页纯蓝带来的孤立感
+   - 标题/品牌字用萝莉体(-font-hand),正文仍用系统字体保证可读
+   ==========================================================================*/
+
+/* 萝莉体:项目自带,含 6763 个汉字,中英文都走它 */
+@font-face {
+  font-family: 'Loli';
+  src: url('./assets/fonts/loli.woff2') format('woff2');
+  font-display: swap;
+}
+
+:root {
+  /* ---------- 设计令牌(组件与文档统一引用这一层) ---------- */
+  --bg-page: #f2f7fa; /* 页面全局主背景:极淡云朵奶蓝 */
+  --bg-card: #ffffff; /* 卡片与组件背景:纯白 */
+  --bg-subtle: #e8f1f7; /* 次级悬浮/选中浅底:柔雾浅蓝 */
+
+  --color-primary: #4c728e; /* 主操作、表头基底:海雾灰蓝 */
+  --color-primary-hover: #3b5d75;
+  --color-accent: #78a6c8; /* 交互高亮、选中项、关键徽章:天空蓝 */
+  --color-secondary: #9dbfd6; /* 次要点缀色、边框高亮 */
+
+  --color-warm-accent: #f7b563; /* 暖日黄:纪念日、小铃铛、重要徽章 */
+  --color-peach: #f6a5a5; /* 柔桃粉:爱心、亲密度 */
+
+  --text-main: #273847; /* 主要标题与正文:深海黛灰蓝 */
+  --text-sub: #788d9e; /* 次要信息/副标题/置灰:雾霾蓝灰 */
+
+  --border-soft: #dce8f2; /* 组件与分割线边框:浅透雾蓝细线 */
+  --shadow-cozy: 0 4px 16px rgba(76, 114, 142, 0.08);
+  --shadow-hard: 4px 4px 0 #cbddeb;
+
+  --radius-card: 16px;
+  --radius-button: 12px;
+
+  /* ---------- 组件别名(历史命名,统一指向上面那层) ---------- */
+  --c-page: var(--bg-page);
+  --c-page-2: #eaf2f8; /* 次要底:比主底再沉一档 */
+  --c-sidebar: #fbfdfe; /* 侧栏:近白,略偏蓝 */
+  --c-card: var(--bg-card);
+  --c-bubble-user: #e4eff7; /* 用户消息气泡:浅蓝 */
+  --c-hover: rgba(120, 166, 200, 0.14);
+  --c-border: var(--border-soft);
+  --c-border-strong: #c2d6e6;
+  --c-text: var(--text-main);
+  --c-text-2: #5a7286; /* 比 text-sub 深一档,用于表单标签 */
+  --c-text-3: var(--text-sub);
+  --c-accent: var(--color-primary);
+  --c-accent-hover: var(--color-primary-hover);
+  --c-accent-soft: var(--bg-subtle);
+  --c-coral: var(--color-peach); /* 保留旧名:爱心/警戒类点缀 */
+  --c-peach: var(--color-warm-accent); /* 保留旧名:暖色点缀 */
+  --c-input: #f7fbfd;
+  --c-code-bg: #eef4f9;
+  --c-scrollbar: rgba(76, 114, 142, 0.22);
+  --c-user-text: var(--text-main);
+  --c-logo: var(--color-accent);
+  --c-nav-active-bg: var(--color-primary);
+  --c-nav-active-bg-hover: var(--color-primary-hover);
+  --c-nav-active-text: #ffffff;
+
+  --chip-bg: #cfe4f2; /* 卡片标题前的图标小方块 */
+  --chip-ink: var(--color-primary);
+
+  --font-hand: 'Loli', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  color-scheme: light;
+}
+
+/* 深色:深海蓝墨底 + 雾蓝字,和浅色同一套色相,不发黄也不发灰 */
+.dark {
+  --bg-page: #0f1a24;
+  --bg-card: #172531;
+  --bg-subtle: #1e3040;
+
+  --color-primary: #8fbad8;
+  --color-primary-hover: #a6cbe4;
+  --color-accent: #78a6c8;
+  --color-secondary: #5c7f97;
+
+  --color-warm-accent: #f7b563;
+  --color-peach: #f2afaf;
+
+  --text-main: #e4eff7;
+  --text-sub: #8ba5b7;
+
+  --border-soft: #263b4c;
+  --shadow-cozy: 0 4px 16px rgba(0, 0, 0, 0.28);
+  --shadow-hard: 4px 4px 0 #0a1218;
+
+  --c-page: #0f1a24;
+  --c-page-2: #0c141c;
+  --c-sidebar: #0c141c;
+  --c-card: #172531;
+  --c-bubble-user: #1f3346;
+  --c-hover: rgba(120, 166, 200, 0.14);
+  --c-border: #263b4c;
+  --c-border-strong: #355062;
+  --c-text: #e4eff7;
+  --c-text-2: #a7becd;
+  --c-text-3: #8ba5b7;
+  --c-accent: #8fbad8;
+  --c-accent-hover: #a6cbe4;
+  --c-accent-soft: #1e3040;
+  --c-coral: #f2afaf;
+  --c-peach: #f7b563;
+  --c-input: #14222e;
+  --c-code-bg: #14212c;
+  --c-scrollbar: rgba(228, 239, 247, 0.2);
+  --c-user-text: #e4eff7;
+  --c-logo: #78a6c8;
+  /* 深色下主按钮用亮蓝底 + 深字,白字压 #8FBAD8 会发虚 */
+  --c-nav-active-bg: #78a6c8;
+  --c-nav-active-bg-hover: #8fbad8;
+  --c-nav-active-text: #0f1a24;
+  --chip-bg: #2a434f;
+  --chip-ink: #cfe4f2;
+  color-scheme: dark;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    'PingFang SC',
+    'Hiragino Sans GB',
+    'Microsoft YaHei',
+    system-ui,
+    sans-serif;
+  background: var(--c-page);
+  color: var(--c-text);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(120, 166, 200, 0.28);
+  color: var(--text-main);
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--c-scrollbar);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ================= Markdown 正文排版 ================= */
+.md-body {
+  font-size: 15px;
+  line-height: 1.75;
+  word-break: break-word;
+  color: var(--c-text);
+}
+.md-body p {
+  margin: 0.5em 0;
+}
+.md-body p:first-child {
+  margin-top: 0;
+}
+.md-body p:last-child {
+  margin-bottom: 0;
+}
+.md-body ul,
+.md-body ol {
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+.md-body li {
+  margin: 0.25em 0;
+}
+.md-body h1,
+.md-body h2,
+.md-body h3,
+.md-body h4 {
+  font-weight: 650;
+  line-height: 1.4;
+  margin: 0.9em 0 0.4em;
+}
+.md-body h1 {
+  font-size: 1.35em;
+}
+.md-body h2 {
+  font-size: 1.2em;
+}
+.md-body h3 {
+  font-size: 1.08em;
+}
+.md-body code {
+  background: var(--c-code-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  padding: 0.12em 0.38em;
+  font-size: 0.88em;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+.md-body pre {
+  background: var(--c-code-bg);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 0.9em 1.1em;
+  overflow-x: auto;
+  margin: 0.7em 0;
+}
+.md-body pre code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+.md-body a {
+  color: var(--c-accent);
+  text-decoration: none;
+}
+.md-body a:hover {
+  text-decoration: underline;
+}
+.md-body blockquote {
+  border-left: 3px solid var(--c-border-strong);
+  padding-left: 0.9em;
+  color: var(--c-text-2);
+  margin: 0.6em 0;
+}
+.md-body hr {
+  border: 0;
+  border-top: 1px solid var(--c-border);
+  margin: 0.9em 0;
+}
+
+/* 淡入 */
+.fade-in {
+  animation: fade-in 0.2s ease;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ================= 侧栏容器(移动抽屉 / 桌面可收起) ================= */
+.sidebar-root {
+  position: fixed;
+  inset-block: 0;
+  left: 0;
+  z-index: 40;
+  width: 264px;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+}
+.sidebar-root.open {
+  transform: translateX(0);
+}
+@media (min-width: 768px) {
+  .sidebar-root {
+    position: static;
+    transform: none;
+    width: 264px;
+    transition: width 0.2s ease;
+  }
+  .sidebar-root.closed-desktop {
+    width: 0;
+    overflow: hidden;
+  }
+}
+
+/* ================= 交互 hover ================= */
+.ui-hover {
+  transition: background-color 0.12s ease;
+}
+.ui-hover:hover {
+  background-color: var(--c-hover) !important;
+}
+.ui-hover-danger:hover {
+  color: #e11d48 !important;
+}
+
+/* 侧栏会话行 */
+.side-item {
+  cursor: pointer;
+  border-radius: 12px;
+  transition: background-color 0.14s ease;
+}
+.side-item:hover {
+  background-color: var(--c-hover);
+}
+.side-item.active {
+  background-color: var(--c-accent-soft);
+}
+.side-item.active:hover {
+  background-color: var(--c-accent-soft);
+}
+
+/* ================= 手帐风公共件 ================= */
+
+/* 萝莉体:标题、品牌字。自带中文字形,不需要额外中文手写体 */
+.font-hand {
+  font-family: var(--font-hand);
+}
+
+/* 手帐贴纸/卡片:淡描边 + 浅软阴影 */
+.paper-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-cozy);
+}
+
+/* 主要操作按钮:咖啡深棕底 + 白字 + 下压阴影 */
+.btn-wood {
+  background: var(--c-nav-active-bg);
+  color: var(--c-nav-active-text);
+  border-radius: 14px;
+  box-shadow: 0 2px 0 rgba(76, 114, 142, 0.28);
+  transition:
+    background-color 0.14s ease,
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+.btn-wood:hover {
+  background: var(--c-nav-active-bg-hover);
+}
+.btn-wood:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 rgba(76, 114, 142, 0.28);
+}
+
+/* 快捷引导胶囊:贴纸质感,悬停轻微上浮 */
+.chip-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-soft);
+  color: var(--c-text-2);
+  font-size: 14px;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    transform 0.14s ease,
+    box-shadow 0.14s ease,
+    border-color 0.14s ease,
+    background-color 0.14s ease;
+}
+.chip-sticker:hover {
+  transform: translateY(-2px);
+  border-color: var(--color-secondary);
+  background: var(--bg-subtle);
+  box-shadow: 0 4px 0 rgba(76, 114, 142, 0.1);
+}
+.chip-sticker:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+.dark .chip-sticker {
+  background: #1e3040;
+}
+.dark .chip-sticker:hover {
+  background: #24394b;
+}
+
+/* 右侧功能导航项:未选中悬停染淡奶橘,选中为咖啡深棕底(颜色由行内 style 给) */
+.nav-item {
+  transition:
+    background-color 0.14s ease,
+    color 0.14s ease;
+}
+.nav-item:not(.is-on):hover {
+  background: var(--c-hover);
+  color: var(--color-primary);
+}
+
+/* range 输入条 */
+input[type='range'] {
+  height: 4px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+/* ================= 手帐卡片(设置页容器) =================
+   白色卡纸浮在米黄页面上:描边比页面底略深一点,阴影极浅,
+   靠"白 + 圆角 + 边"区分层次,不用重阴影。 */
+.hand-card {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  padding: 20px;
+  box-shadow: var(--shadow-cozy);
+}
+.dark .hand-card {
+  background: #172531;
+  border-color: #263b4c;
+}
+
+/* 卡片内的设置行:行与行之间用极淡的线分隔,不再每条套一个框 */
+.hand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 0;
+}
+.hand-row + .hand-row {
+  border-top: 1px solid #eaf2f8;
+}
+.hand-row.is-stack {
+  display: block;
+}
+.dark .hand-row + .hand-row {
+  border-top-color: var(--c-border);
+}
+
+/* 设置页左侧子导航:未选中柔和炭灰,选中为奶黄卡片 */
+.set-nav-item {
+  color: var(--text-sub);
+  transition:
+    background-color 0.14s ease,
+    color 0.14s ease;
+}
+.set-nav-item:hover {
+  background: #f4f9fc;
+  color: var(--text-main);
+}
+.set-nav-item.is-on {
+  background: var(--bg-subtle);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+.set-nav-ico {
+  color: #8ba5b7;
+  transition:
+    background-color 0.14s ease,
+    color 0.14s ease;
+}
+.set-nav-item:hover .set-nav-ico {
+  color: var(--color-primary);
+}
+.set-nav-item.is-on .set-nav-ico {
+  background: #cfe4f2;
+  color: var(--color-primary);
+}
+.dark .set-nav-item {
+  color: var(--c-text-2);
+}
+.dark .set-nav-item:hover {
+  background: #1e3040;
+  color: var(--c-text);
+}
+.dark .set-nav-item.is-on {
+  background: #1e3040;
+  color: #cfe4f2;
+}
+.dark .set-nav-item.is-on .set-nav-ico {
+  background: #2a434f;
+  color: #cfe4f2;
+}
+
+/* ================= 设置页控件 ================= */
+
+/* 圆形开关:开启为蜜桃粉,关闭为浅米灰 */
+.tog {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  width: 46px;
+  height: 26px;
+  border-radius: 999px;
+  background: #d9e6ef;
+  cursor: pointer;
+  transition: background-color 0.18s ease;
+}
+.tog::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(76, 114, 142, 0.24);
+  transition: transform 0.18s ease;
+}
+.tog.is-on {
+  background: var(--color-accent);
+}
+.tog.is-on::after {
+  transform: translateX(20px);
+}
+.dark .tog:not(.is-on) {
+  background: #2a3f50;
+}
+
+/* 下拉:去掉原生箭头,右端放一个圆润小箭头(用 currentColor,深色自跟随) */
+.sel-wrap {
+  position: relative;
+  flex: 0 1 250px;
+  min-width: 0;
+}
+.sel {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+  border-radius: 10px;
+  border: 1.5px solid var(--c-border);
+  background: var(--c-input);
+  color: var(--c-text);
+  padding: 9px 32px 9px 12px;
+  font-size: 13.5px;
+  line-height: 1.4;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.14s ease;
+}
+.sel:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(120, 166, 200, 0.2);
+}
+.sel-arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #8ba5b7;
+}
+.dark .sel {
+  background: var(--c-input);
+}
+
+/* 开场白输入框:手写体,让"它说的话"看起来像它自己写的 */
+.txt-hand {
+  width: 100%;
+  border-radius: 12px;
+  border: 1.5px solid var(--c-border);
+  background: var(--c-input);
+  color: var(--c-text);
+  padding: 12px 14px;
+  font-family: var(--font-hand);
+  font-size: 15px;
+  line-height: 1.75;
+  outline: none;
+  resize: none;
+  transition:
+    border-color 0.14s ease,
+    box-shadow 0.14s ease;
+}
+.txt-hand:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px rgba(120, 166, 200, 0.2);
+}
+.txt-hand::placeholder {
+  color: #a2b7c6;
+}
+
+/* ============================================================================
+   角色卡:拍立得相纸
+   相纸白边 + 硬边投影 + 右上角纸胶带;悬停整体上浮 2px,不改变网格位置
+   ==========================================================================*/
+.polaroid-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(236px, 1fr));
+  gap: 20px;
+}
+
+.polaroid {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 14px 14px 12px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-soft);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-hard);
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    border-color 0.16s ease;
+}
+.polaroid:hover {
+  transform: translateY(-2px);
+  box-shadow: 5px 6px 0 #cbddeb;
+}
+/* 当前启用的那张:蜜桃描边 + 蜜桃落地影 */
+.polaroid.is-on {
+  border-color: var(--color-accent);
+  box-shadow: 4px 4px 0 #b4d1e4;
+}
+.polaroid.is-on:hover {
+  box-shadow: 5px 6px 0 #b4d1e4;
+}
+
+/* 右上角纸胶带:底色走内联,before 只负责和纸条纹 */
+.polaroid-tape {
+  position: absolute;
+  top: -8px;
+  right: 14px;
+  width: 54px;
+  height: 16px;
+  border-radius: 2px;
+  transform: rotate(-8deg);
+  opacity: 0.92;
+  box-shadow: 0 1px 0 rgba(76, 114, 142, 0.1);
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.6) 0 3px,
+    rgba(255, 255, 255, 0) 3px 8px
+  );
+  pointer-events: none;
+}
+
+/* 多张卡时选中的那张:左上角钉一个「当前」方框,落在相片内的角上 */
+.polaroid-current {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 2;
+  padding: 5px 11px;
+  border: 2px solid var(--color-accent);
+  border-radius: 8px;
+  background: var(--bg-card);
+  font-family: var(--font-hand);
+  font-size: 14px;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  color: var(--color-primary);
+  box-shadow: 0 1px 0 rgba(76, 114, 142, 0.1);
+  pointer-events: none;
+}
+
+/* 立绘卡槽:正方形,纯色底 + 极淡斜纹纸纹 */
+.polaroid-photo {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--tint);
+  overflow: hidden;
+}
+.polaroid-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.28) 0 2px,
+    rgba(255, 255, 255, 0) 2px 7px
+  );
+  pointer-events: none;
+}
+.polaroid-initial {
+  font-family: var(--font-hand);
+  font-size: 84px;
+  line-height: 1;
+  color: var(--ink);
+  user-select: none;
+}
+.polaroid-paw {
+  position: absolute;
+  right: 9px;
+  bottom: 7px;
+  color: var(--ink);
+  opacity: 0.45;
+}
+
+/* 相纸白边下方的字:名字用萝莉体,摘录用正文小字 */
+.polaroid-name {
+  margin-top: 11px;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.2;
+  letter-spacing: 0.4px;
+  text-align: center;
+  color: var(--text-main);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.polaroid-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-top: 9px;
+  min-height: 2.7em;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--text-sub);
+}
+.polaroid-foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px dashed #e7f0f7;
+}
+/* 卡片里的次级动作:图标按钮 */
+.mini-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 28px;
+  padding: 0 9px;
+  border-radius: 9px;
+  font-size: 12px;
+  color: var(--text-sub);
+  transition:
+    background-color 0.14s ease,
+    color 0.14s ease;
+}
+.mini-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--color-primary);
+}
+.mini-btn.is-danger:hover {
+  background: rgba(229, 72, 77, 0.1);
+  color: #d14548;
+}
+
+/* 空态:手绘空相框 */
+.empty-frame {
+  color: #b7cbd9;
+}
+
+/* 深色:相纸底提亮到卡片色,硬影压到近黑;色块与首字换暗底亮字 */
+.dark .polaroid {
+  background: #172531;
+  border-color: #263b4c;
+  box-shadow: 4px 4px 0 #0a1218;
+}
+.dark .polaroid:hover {
+  box-shadow: 5px 6px 0 #0a1218;
+}
+.dark .polaroid.is-on {
+  border-color: #5c7f97;
+  box-shadow: 4px 4px 0 #0e2534;
+}
+.dark .polaroid.is-on:hover {
+  box-shadow: 5px 6px 0 #0e2534;
+}
+.dark .polaroid-photo {
+  background: var(--tint-d);
+}
+.dark .polaroid-photo::after {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.05) 0 2px,
+    rgba(255, 255, 255, 0) 2px 7px
+  );
+}
+.dark .polaroid-initial {
+  color: var(--ink-d);
+}
+.dark .polaroid-paw {
+  color: var(--ink-d);
+}
+.dark .polaroid-name {
+  color: var(--c-text);
+}
+.dark .polaroid-desc {
+  color: var(--c-text-3);
+}
+.dark .polaroid-foot {
+  border-top-color: var(--c-border);
+}
+.dark .mini-btn {
+  color: var(--c-text-3);
+}
+.dark .mini-btn:hover {
+  background: #24394b;
+  color: #e4eff7;
+}
+
+/* 对话输入框:白底圆角 24,聚焦时描边转天空蓝并泛一圈光晕 */
+.composer {
+  box-shadow: var(--shadow-cozy);
+  transition:
+    border-color 0.14s ease,
+    box-shadow 0.14s ease;
+}
+.composer:focus-within {
+  border-color: var(--color-accent);
+  box-shadow:
+    var(--shadow-cozy),
+    0 0 0 3px rgba(120, 166, 200, 0.2);
+}

@@ -1,0 +1,95 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+.venv/
+*.egg-info/
+
+# ---- 运行时数据与隐私:绝不入库 ----
+# 长期记忆 SqliteStore / 会话 / care / pet 状态的落盘目录(见 config.MEMORY_DIR),
+# 内含真实用户倾诉内容,属于本机数据,不属于项目。
+src/gzhu_cup2/agent/memory_data/
+src/gzhu_cup2/agent/memory_data_backup_*/
+src/gzhu_cup2/agent/long_memory/data/
+*.sqlite3
+*.sqlite3-journal
+
+# 设置面板「API 连接」的本地持久化(含明文 Key)
+src/gzhu_cup2/agent/config/runtime_connection.json
+
+# 环境变量文件(模板见 .env.example)
+.env
+
+# 记忆导出 / 存档快照
+长期记忆存档/
+
+# 模型缓存
+.cache/
+
+# ---- 演示 / 评测产物:可由脚本重新生成,不入库 ----
+# 生成方式见 src/gzhu_cup2/agent/tools/{demo_seed,demo_inject,demo_report,eval_guard}.py
+demo_report.html
+demo_data/
+demo_eval/
+# 对抗性注入测试的数据目录(adversarial_probe.py,含 --dir 派生的对照目录)
+demo_adv*/
+# 新旧算法对照实验的语料/结果
+algo_compare/
+
+# ---- 前端 ----
+apps/web/node_modules/
+apps/web/dist/
+
+# ---- 桌宠桌面端(Electron) ----
+apps/desktop/node_modules/
+apps/desktop/dist/
+# 打包产物:PyInstaller 的后端目录 + electron-builder 的安装包
+apps/desktop/backend-dist/
+apps/desktop/release/
+# 后端打包中间物(spec 由 packaging/build_backend.py 生成,不必入库)
+packaging/build/
+packaging/*.spec
+
+# ---- 答辩 / 演示材料:不进代码仓库 ----
+*.pptx
+心伴决赛演示*/
+
+# ---- IDE / 编辑器个人状态 ----
+.idea/
+.obsidian/
+.zcode/
+.reasonix/
+.workbuddy/
+.slidep/
+
+# ---- 测试/工具临时目录:统一落在仓库内,不入库 ----
+# 背景:本机 %TEMP%(C:\Users\<user>\AppData\Local\Temp)不可写,
+#      临时文件由根 conftest.py 重定向到仓库内,详见该文件说明。
+.pytest-tmp/
+.pytest_cache/
+.pytest-run*/
+.ptmp*/
+.tmp-*/
+.tmp-pytest/
+pytest-cache-files-*/
+pytest-tmp/
+
+# ---- 环境诊断残留(mode 0o700 死目录,需管理员权限才能删除)----
+.probe-mode/
+probe-*/
+
+# ---- 测试自身产生的隔离/中间产物 ----
+tests/_card_tmp/
+tests/_state_tmp/
+tests/_mem_artifacts/
+tests/_conn_isolation/
+# workdir 夹具的根目录:它在 finally 里自清,但 Windows 上 SqliteStore 句柄
+# 尚未释放时 rmtree 会失败(ignore_errors 吞掉),于是留下 memory.sqlite3。
+tests/_test_artifacts/
+# 运行时状态隔离文件(夹具统一用 *_test.json 命名)
+tests/*_test.json
+
+# ---- 手动验收的数据隔离目录(tests/isolate-run.ps1 创建)----
+# 每次手动对话验收的数据全部落在 .manual-test/<tag>/,含测试期间的
+# 记忆库/会话库/连接副本;用完可整目录删除,真实记忆库零残留。
+.manual-test/

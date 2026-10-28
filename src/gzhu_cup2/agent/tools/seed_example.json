@@ -1,0 +1,31 @@
+{
+  "user": "local_user",
+  "facts": [
+    {"text": "用户下周四需要参加毕业答辩。", "category": "work", "importance": 0.9},
+    {"text": "用户下周四需要参加毕业答辩，对此感到紧张。", "category": "work", "importance": 0.9},
+    {"text": "用户养了一只叫年糕的橘猫。", "category": "life", "importance": 0.8},
+    {"text": "用户有失眠困扰，习惯听下雨声的白噪音助眠。", "category": "health", "importance": 0.7},
+    {"text": "用户计划答辩结束后和室友去南京旅行三天。", "category": "plan", "importance": 0.75}
+  ],
+  "episodes": [
+    {
+      "digest": "用户聊到答辩压力导致失眠，提到养猫带来的安抚感。",
+      "importance": 0.8,
+      "topics": ["school"],
+      "risk_note": ""
+    },
+    {
+      "digest": "用户再次提到答辩和失眠，情绪略显低落。",
+      "importance": 0.8,
+      "topics": ["school"],
+      "risk_note": ""
+    }
+  ],
+  "risk": [
+    {"facet": "ideation", "quote": "有时候觉得活着没什么意思"}
+  ],
+  "ticks": [
+    {"day": "2026-09-08", "count": 4, "neg_sum": 2.4, "neg_n": 4, "lex_neg_sum": 1.2, "lex_neg_n": 4, "emotions": {"anxious": 3, "sad": 1}, "risk_max_rank": 1},
+    {"day": "2026-09-09", "count": 6, "neg_sum": 2.4, "neg_n": 6, "lex_neg_sum": 1.8, "lex_neg_n": 6, "emotions": {"neutral": 4, "sad": 2}, "risk_max_rank": 1}
+  ]
+}

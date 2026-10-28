@@ -1,0 +1,44 @@
+[project]
+name = "gzhu-cup2"
+version = "1.3.2"
+requires-python = ">=3.13"
+dependencies = [
+    "langchain-openai>=1.6.0,<2.0",
+    "langchain-core>=1.6.0,<2.0",
+    "langgraph>=1.2.0,<2.0",
+    "langgraph-checkpoint-sqlite>=3.0.0,<4.0",
+    "pydantic>=2.13.0,<3.0",
+    "fastapi>=0.141.1",
+    "uvicorn[standard]>=0.52.4",
+]
+
+[project.scripts]
+gzhu-cup2 = "gzhu_cup2.entrypoints.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    # 打包后端(npm run backend -> packaging/build_backend.py)需要。
+    # 此前是手工安装、未声明,uv sync 会把它卸载掉。
+    "pyinstaller>=6.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+# 后端已是可安装包(src 布局),测试无需再改 sys.path
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]

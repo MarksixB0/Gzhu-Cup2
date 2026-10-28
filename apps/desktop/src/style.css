@@ -1,0 +1,30 @@
+/* 桌宠窗口是透明的无边框窗口：所有容器都不能有背景色。 */
+
+/* 萝莉体（本地字体，随包分发）。走 Vite 资源管线，file:// 下用相对路径加载。 */
+@font-face {
+  font-family: 'LoliFont';
+  src: url('../assets/fonts/loli.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  overflow: hidden;
+}
+
+body {
+  /* 桌宠窗全局用萝莉体；缺字自动回退系统字体 */
+  font-family: 'LoliFont', system-ui, -apple-system, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+}
+
+* {
+  user-select: none;
+  -webkit-user-drag: none;
+}

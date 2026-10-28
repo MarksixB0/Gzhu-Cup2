@@ -1,0 +1,16 @@
+{
+  "user": "local_user",
+  "facts": [
+    {"text": "用户的名字叫阿岚。", "category": "life", "importance": 0.95},
+    {"text": "用户养了一只叫团子的柴犬。", "category": "life", "importance": 0.8},
+    {"text": "用户下周要参加一场模拟面试。", "category": "work", "importance": 0.7},
+    {"text": "用户喜欢在雨天听爵士乐。", "category": "preference", "importance": 0.3}
+  ],
+  "episodes": [
+    {"digest": "用户聊到模拟面试很紧张，担心自己表现不好。", "importance": 0.8, "topics": ["work"]},
+    {"digest": "用户提到和室友因为作息问题有些不愉快。", "importance": 0.7, "topics": ["relationship"]}
+  ],
+  "risk": [
+    {"facet": "ideation", "quote": "有时候觉得撑不下去了"}
+  ]
+}
