@@ -214,6 +214,8 @@ async function finishOnboarding(): Promise<void> {
  *
  * 刻意不追问"确定吗":跳过是用户的权利,不该用二次确认当阻力;
  * 想填的时候「设置 → 用户」一直在那儿。
+ *
+ * 也**不回应任何内容**:把拒绝再翻译成一句客套话甩回去,等于没让用户安静下来;气泡直接收起、回待机即可。
  */
 async function skipOnboarding(): Promise<void> {
   if (!onboardingActive()) return
@@ -221,27 +223,19 @@ async function skipOnboarding(): Promise<void> {
   input.value = ''
   hideComposer()
   void backend.onboarding('skip')
-  closeOnboarding('好，不问了。想填的时候在「设置 → 用户」里。')
+  cancelBubbleHide()
+  bubble.value = null
+  goIdle()
 }
 
 /**
- * 引导收尾：先说完收尾提示，等气泡收起**之后**再放角色卡开场白。
+ * 引导收尾：只说这一句收尾提示。
  *
- * 为什么必须错开：两句同时说，后一句会把前一句顶掉一半（与 `bootOpening` 的
- * 互斥同一原因）。而"补放开场白"这件事本身是必须的 —— 随包会投放一张初始
- * 角色卡并默认启用（main.cjs::seedInitialCard），它的 first_mes 就是第一次
- * 见面该说的话；引导接管了启动气泡却不补放，开场白就永远看不到了。
- *
- * 不额外判断"要不要放"：用户在等待期间若先开了口，`showGreeting` 自己会因
- * `interacted` 而放弃（它才是这条规则的所有者）。
+ * 开场白**不在这里补放**：它只在每次启动时的第一句出现（见 `bootOpening`）。
+ * 引导接管了启动气泡时，本次启动就没有开场白；下次启动、无需引导时照常出现。
  */
 function closeOnboarding(hint: string): void {
   say(hint, { ttl: ONBOARD_DONE_TTL_MS })
-  if (greetingAfterOnboarding !== null) clearTimeout(greetingAfterOnboarding)
-  greetingAfterOnboarding = setTimeout(() => {
-    greetingAfterOnboarding = null
-    void showGreeting()
-  }, ONBOARD_DONE_TTL_MS + 300)
 }
 
 /**
@@ -282,13 +276,6 @@ let backToIdle: ReturnType<typeof setTimeout> | null = null
 let pollTimer: ReturnType<typeof setInterval> | null = null
 let bubbleTimer: ReturnType<typeof setTimeout> | null = null
 let greetingRetry: ReturnType<typeof setTimeout> | null = null
-/**
- * 首启引导收尾后补放角色卡开场白的定时器（见 `closeOnboarding`）。
- *
- * 引导会接管启动气泡（`bootOpening` 的互斥），若不补放，随包初始角色卡的
- * `first_mes` 就永远不会出现在第一次启动里。
- */
-let greetingAfterOnboarding: ReturnType<typeof setTimeout> | null = null
 let lastShownId = ''
 /** 上一条展示过的主动消息文本：用于去重（后端可能重复生成同一条） */
 let lastShownText = ''
@@ -1226,7 +1213,6 @@ onUnmounted(() => {
   if (backToIdle !== null) clearTimeout(backToIdle)
   if (pollTimer !== null) clearInterval(pollTimer)
   if (greetingRetry !== null) clearTimeout(greetingRetry)
-  if (greetingAfterOnboarding !== null) clearTimeout(greetingAfterOnboarding)
   if (manifestRetryTimer !== null) clearTimeout(manifestRetryTimer)
   cancelBubbleHide()
 })
